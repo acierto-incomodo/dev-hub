@@ -33,6 +33,9 @@ function createWindow() {
     },
   });
 
+  // Maximizar al iniciar la aplicación
+  win.maximize();
+
   win.loadFile("index.html");
 
   createView("https://github.com");
@@ -139,7 +142,8 @@ autoUpdater.on("update-not-available", () => {
 
 autoUpdater.on("error", (error) => {
   updateStatus = "idle";
-  updateError = error == null ? "" : (error.stack || error.message || String(error));
+  updateError =
+    error == null ? "" : error.stack || error.message || String(error);
   sendUpdateStatus();
 });
 
