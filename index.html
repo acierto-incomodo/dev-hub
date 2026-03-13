@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+
+<style>
+
+body{
+margin:0;
+background:#202020;
+font-family:"Segoe UI";
+color:white;
+overflow:hidden;
+}
+
+.titlebar{
+
+height:60px;
+background:#1f1f1f;
+display:flex;
+align-items:center;
+padding:0 15px;
+
+border-bottom:1px solid #333;
+
+}
+
+/* botones izquierda */
+
+.navbutton{
+
+padding:8px 14px;
+margin-right:10px;
+
+border-radius:6px;
+
+cursor:pointer;
+
+}
+
+.navbutton:hover{
+background:#2c2c2c;
+}
+
+/* empuja elementos a la derecha */
+
+.spacer{
+flex:1;
+}
+
+/* botón update derecha */
+
+.updateButton{
+
+padding:8px 14px;
+
+border-radius:6px;
+
+cursor:pointer;
+
+background:#2a2a2a;
+
+}
+
+.updateButton:hover{
+background:#3a3a3a;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="titlebar">
+
+<div class="navbutton" onclick="openSite('https://github.com')">
+GitHub
+</div>
+
+<div class="navbutton" onclick="openSite('https://dashboard.photonengine.com')">
+Photon
+</div>
+
+<div class="navbutton" onclick="openSite('https://assetstore.unity.com')">
+Unity Asset Store
+</div>
+
+<div class="navbutton" onclick="openSite('https://partner.microsoft.com')">
+Microsoft Partner
+</div>
+
+<div class="spacer"></div>
+
+<div class="updateButton" onclick="openUpdates()">
+Updates
+</div>
+
+</div>
+
+<script src="renderer.js"></script>
+
+</body>
+</html>

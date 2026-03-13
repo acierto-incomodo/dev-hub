@@ -1,0 +1,9 @@
+dev-hub
+│
+├ main.js
+├ preload.js
+├ index.html
+├ update.html
+├ renderer.js
+├ icon.png
+└ package.json
