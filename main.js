@@ -1,5 +1,13 @@
-const { app, BrowserWindow, BrowserView, Menu, ipcMain } = require("electron");
+const {
+  app,
+  BrowserWindow,
+  BrowserView,
+  Menu,
+  ipcMain,
+  session,
+} = require("electron");
 const { autoUpdater } = require("electron-updater");
+const fs = require("fs");
 const path = require("path");
 
 // main.js al inicio
@@ -90,6 +98,15 @@ ipcMain.on("open-updates", () => {
   }
 });
 
+/* IPC para abrir pantalla extra */
+ipcMain.on("open-extra", () => {
+  if (view) {
+    win.removeBrowserView(view);
+    view = null;
+  }
+  win.loadFile("extra.html");
+});
+
 /* IPC para control de actualizaciones */
 ipcMain.on("check-for-updates", () => {
   if (app.isPackaged) {
@@ -99,6 +116,37 @@ ipcMain.on("check-for-updates", () => {
 
 ipcMain.on("request-update-status", () => {
   sendUpdateStatus();
+});
+
+/* IPC para borrar datos de Electron */
+ipcMain.on("clear-electron-data", async () => {
+  if (!win) return;
+  win.webContents.send("clear-data-status", { status: "starting" });
+
+  try {
+    await session.defaultSession.clearStorageData();
+    await session.defaultSession.clearCache();
+
+    const userDataPath = app.getPath("userData");
+
+    // Eliminar contenido del directorio userData (sin eliminar el directorio en sí)
+    const items = await fs.promises.readdir(userDataPath);
+    await Promise.all(
+      items.map((item) =>
+        fs.promises.rm(path.join(userDataPath, item), {
+          recursive: true,
+          force: true,
+        }),
+      ),
+    );
+
+    win.webContents.send("clear-data-status", { status: "done" });
+  } catch (error) {
+    win.webContents.send("clear-data-status", {
+      status: "error",
+      error: error == null ? "" : error.stack || error.message || String(error),
+    });
+  }
 });
 
 /* Menú contextual básico */

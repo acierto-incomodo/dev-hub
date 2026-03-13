@@ -1,6 +1,6 @@
 {
   "name": "dev-hub",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Development dashboard hub",
   "main": "main.js",
   "author": "StormGamesStudios <meliodas.aitor@gmail.com>",

@@ -1,0 +1,109 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Restablecer datos</title>
+
+    <style>
+      body {
+        margin: 0;
+        height: 100vh;
+        background: #202020;
+        color: white;
+        font-family: "Segoe UI", sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .box {
+        background: #2a2a2a;
+        padding: 40px;
+        border-radius: 10px;
+        width: 420px;
+        text-align: center;
+      }
+
+      .status {
+        margin-top: 15px;
+        font-size: 14px;
+        opacity: 0.8;
+      }
+
+      button {
+        padding: 10px 14px;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        margin-top: 15px;
+      }
+
+      button.primary {
+        background: #0078d7;
+        color: white;
+      }
+
+      button.secondary {
+        background: #2a2a2a;
+        color: white;
+      }
+
+      button:disabled {
+        opacity: 0.5;
+        cursor: default;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="box">
+      <h2>Eliminar datos de Electron</h2>
+      <p class="status" id="status">Esto borrará cuentas, sesiones y caché.</p>
+      <button id="clearButton" class="primary">Eliminar datos</button>
+      <button id="closeButton" class="secondary">Cerrar</button>
+    </div>
+
+    <script>
+      const statusEl = document.getElementById("status");
+      const clearButton = document.getElementById("clearButton");
+      const closeButton = document.getElementById("closeButton");
+
+      function setStatus(text) {
+        statusEl.innerText = text;
+      }
+
+      function setRunning(running) {
+        clearButton.disabled = running;
+      }
+
+      clearButton.addEventListener("click", () => {
+        setStatus("Eliminando datos... espera unos segundos...");
+        setRunning(true);
+        window.electronAPI.clearElectronData();
+      });
+
+      closeButton.addEventListener("click", () => {
+        window.close();
+      });
+
+      window.electronAPI.onClearDataStatus((data) => {
+        if (!data) return;
+
+        switch (data.status) {
+          case "starting":
+            setStatus("Iniciando eliminación...");
+            break;
+          case "done":
+            setStatus(
+              "Datos eliminados. Reinicia la aplicación para aplicar cambios.",
+            );
+            setRunning(false);
+            break;
+          case "error":
+            setStatus(`Error: ${data.error}`);
+            setRunning(false);
+            break;
+        }
+      });
+    </script>
+  </body>
+</html>

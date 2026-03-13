@@ -17,4 +17,9 @@ contextBridge.exposeInMainWorld("electronAPI", {
     ipcRenderer.on("update-status", (e, status) => callback(status)),
   onUpdateError: (callback) =>
     ipcRenderer.on("update-error", (e, error) => callback(error)),
+
+  // Borrar datos de Electron
+  clearElectronData: () => ipcRenderer.send("clear-electron-data"),
+  onClearDataStatus: (callback) =>
+    ipcRenderer.on("clear-data-status", (e, status) => callback(status)),
 });

@@ -5,3 +5,7 @@ function openSite(url) {
 function openUpdates() {
   window.electronAPI.openUpdates();
 }
+
+function openExtra() {
+  window.electronAPI.openExtra();
+}
