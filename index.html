@@ -1,105 +1,95 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
+  <head>
+    <meta charset="UTF-8" />
 
-<meta charset="UTF-8">
+    <style>
+      body {
+        margin: 0;
+        background: #202020;
+        font-family: "Segoe UI";
+        color: white;
+        overflow: hidden;
+      }
 
-<style>
+      .titlebar {
+        height: 60px;
+        background: #1f1f1f;
+        display: flex;
+        align-items: center;
+        padding: 0 15px;
 
-body{
-margin:0;
-background:#202020;
-font-family:"Segoe UI";
-color:white;
-overflow:hidden;
-}
+        border-bottom: 1px solid #333;
+      }
 
-.titlebar{
+      /* botones izquierda */
 
-height:60px;
-background:#1f1f1f;
-display:flex;
-align-items:center;
-padding:0 15px;
+      .navbutton {
+        padding: 8px 14px;
+        margin-right: 10px;
 
-border-bottom:1px solid #333;
+        border-radius: 6px;
 
-}
+        cursor: pointer;
+      }
 
-/* botones izquierda */
+      .navbutton:hover {
+        background: #2c2c2c;
+      }
 
-.navbutton{
+      /* empuja elementos a la derecha */
 
-padding:8px 14px;
-margin-right:10px;
+      .spacer {
+        flex: 1;
+      }
 
-border-radius:6px;
+      /* botón update derecha */
 
-cursor:pointer;
+      .updateButton {
+        padding: 8px 14px;
 
-}
+        border-radius: 6px;
 
-.navbutton:hover{
-background:#2c2c2c;
-}
+        cursor: pointer;
 
-/* empuja elementos a la derecha */
+        background: #2a2a2a;
+      }
 
-.spacer{
-flex:1;
-}
+      .updateButton:hover {
+        background: #3a3a3a;
+      }
+    </style>
+  </head>
 
-/* botón update derecha */
+  <body>
+    <div class="titlebar">
+      <div class="navbutton" onclick="openSite('https://github.com')">
+        GitHub
+      </div>
 
-.updateButton{
+      <div
+        class="navbutton"
+        onclick="openSite('https://dashboard.photonengine.com')"
+      >
+        Photon
+      </div>
 
-padding:8px 14px;
+      <div class="navbutton" onclick="openSite('https://assetstore.unity.com')">
+        Unity Asset Store
+      </div>
 
-border-radius:6px;
+      <div
+        class="navbutton"
+        onclick="openSite('https://partner.microsoft.com')"
+      >
+        Microsoft Partner
+      </div>
 
-cursor:pointer;
+      <div class="spacer"></div>
 
-background:#2a2a2a;
+      <div class="updateButton" onclick="openUpdates()">Updates</div>
+    </div>
 
-}
-
-.updateButton:hover{
-background:#3a3a3a;
-}
-
-</style>
-
-</head>
-
-<body>
-
-<div class="titlebar">
-
-<div class="navbutton" onclick="openSite('https://github.com')">
-GitHub
-</div>
-
-<div class="navbutton" onclick="openSite('https://dashboard.photonengine.com')">
-Photon
-</div>
-
-<div class="navbutton" onclick="openSite('https://assetstore.unity.com')">
-Unity Asset Store
-</div>
-
-<div class="navbutton" onclick="openSite('https://partner.microsoft.com')">
-Microsoft Partner
-</div>
-
-<div class="spacer"></div>
-
-<div class="updateButton" onclick="openUpdates()">
-Updates
-</div>
-
-</div>
-
-<script src="renderer.js"></script>
-
-</body>
+    <script src="renderer.js"></script>
+  </body>
 </html>

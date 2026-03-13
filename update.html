@@ -1,77 +1,147 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-<meta charset="UTF-8">
-<title>Actualizando DevHub</title>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Actualizando DevHub</title>
 
-<style>
-body{
-  margin:0;
-  height:100vh;
-  background:#202020;
-  color:white;
-  font-family:"Segoe UI", sans-serif;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-}
+    <style>
+      body {
+        margin: 0;
+        height: 100vh;
+        background: #202020;
+        color: white;
+        font-family: "Segoe UI", sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
 
-.box{
-  background:#2a2a2a;
-  padding:40px;
-  border-radius:10px;
-  width:400px;
-  text-align:center;
-}
+      .box {
+        background: #2a2a2a;
+        padding: 40px;
+        border-radius: 10px;
+        width: 400px;
+        text-align: center;
+      }
 
-.progress-container{
-  background:#1f1f1f;
-  border-radius:6px;
-  width:100%;
-  height:20px;
-  margin-top:20px;
-  overflow:hidden;
-}
+      .progress-container {
+        background: #1f1f1f;
+        border-radius: 6px;
+        width: 100%;
+        height: 20px;
+        margin-top: 20px;
+        overflow: hidden;
+      }
 
-.progress-bar{
-  height:100%;
-  width:0%;
-  background:#0078d7;
-  border-radius:6px;
-  transition: width 0.3s ease;
-}
+      .progress-bar {
+        height: 100%;
+        width: 0%;
+        background: #0078d7;
+        border-radius: 6px;
+        transition: width 0.3s ease;
+      }
 
-.status{
-  margin-top:15px;
-  font-size:14px;
-  opacity:0.8;
-}
-</style>
-</head>
-<body>
+      .status {
+        margin-top: 15px;
+        font-size: 14px;
+        opacity: 0.8;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="box">
+      <h2>Actualizando DevHub</h2>
+      <p class="status" id="status">Buscando actualizaciones...</p>
+      <div class="progress-container">
+        <div class="progress-bar" id="progress"></div>
+      </div>
+      <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center;">
+        <button id="checkButton" style="padding: 8px 12px; border-radius: 6px; border: none; background: #0078d7; color: white; cursor: pointer;">Buscar actualizaciones</button>
+        <button id="installButton" style="padding: 8px 12px; border-radius: 6px; border: none; background: #2a2a2a; color: white; cursor: pointer;" disabled>Cerrar e instalar</button>
+      </div>
+    </div>
 
-<div class="box">
-  <h2>Actualizando DevHub</h2>
-  <p class="status" id="status">Buscando actualizaciones...</p>
-  <div class="progress-container">
-    <div class="progress-bar" id="progress"></div>
-  </div>
-</div>
+    <script>
+      const statusEl = document.getElementById("status");
+      const progressEl = document.getElementById("progress");
+      const checkButton = document.getElementById("checkButton");
+      const installButton = document.getElementById("installButton");
 
-<script>
-const { ipcRenderer } = require('electron')
+      function setStatus(text) {
+        statusEl.innerText = text;
+      }
 
-// actualizar estado
-ipcRenderer.on('update-progress', (event, percent) => {
-  document.getElementById('progress').style.width = percent + '%'
-  document.getElementById('status').innerText = `Descargando actualización... ${percent.toFixed(0)}%`
-})
+      function setProgress(percent) {
+        progressEl.style.width = `${percent}%`;
+      }
 
-ipcRenderer.on('update-downloaded', () => {
-  document.getElementById('status').innerText = 'Actualización lista. Se instalará al cerrar la app.'
-  document.getElementById('progress').style.width = '100%'
-})
-</script>
+      function updateButtons(status) {
+        installButton.disabled = status !== "downloaded";
+      }
 
-</body>
+      window.electronAPI.onUpdateStatus((data) => {
+        if (!data) return;
+
+        const { status, progress, error } = data;
+
+        switch (status) {
+          case "checking":
+            setStatus("Buscando actualizaciones...");
+            break;
+          case "available":
+            setStatus("Actualización disponible. Descargando...");
+            break;
+          case "downloading":
+            setStatus(`Descargando actualización... ${Math.round(progress)}%`);
+            setProgress(progress);
+            break;
+          case "downloaded":
+            setProgress(100);
+            setStatus("Actualización lista. Cierra la app para instalarla.");
+            break;
+          case "not-available":
+            setProgress(0);
+            setStatus("No hay actualizaciones disponibles.");
+            break;
+          case "idle":
+          default:
+            setStatus("Listo.");
+            break;
+        }
+
+        if (error) {
+          setStatus(`Error: ${error}`);
+        }
+
+        updateButtons(status);
+      });
+
+      window.electronAPI.onUpdateProgress((percent) => {
+        setProgress(percent);
+        setStatus(`Descargando actualización... ${percent.toFixed(0)}%`);
+      });
+
+      window.electronAPI.onUpdateDownloaded(() => {
+        setProgress(100);
+        setStatus("Actualización lista. Cierra la app para instalarla.");
+        updateButtons("downloaded");
+      });
+
+      window.electronAPI.onUpdateError((error) => {
+        setStatus(`Error al buscar actualizaciones: ${error}`);
+      });
+
+      checkButton.addEventListener("click", () => {
+        window.electronAPI.checkForUpdates();
+      });
+
+      installButton.addEventListener("click", () => {
+        setStatus("Cerrando y aplicando actualización...");
+        window.close();
+      });
+
+      // Solicita el estado inicial cuando se carga la página
+      window.electronAPI.requestUpdateStatus();
+    </script>
+  </body>
 </html>

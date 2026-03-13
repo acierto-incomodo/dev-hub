@@ -1,9 +1,20 @@
-const { contextBridge, ipcRenderer } = require("electron")
+const { contextBridge, ipcRenderer } = require("electron");
 
-contextBridge.exposeInMainWorld("electronAPI",{
+contextBridge.exposeInMainWorld("electronAPI", {
+  open: (url) => ipcRenderer.send("open-site", url),
+  openUpdates: () => ipcRenderer.send("open-updates"),
 
-    open:(url)=>ipcRenderer.send("open-site",url),
+  // Actualizaciones
+  checkForUpdates: () => ipcRenderer.send("check-for-updates"),
+  requestUpdateStatus: () => ipcRenderer.send("request-update-status"),
 
-    openUpdates:()=>ipcRenderer.send("open-updates")
-
-})
+  // recibir eventos del updater
+  onUpdateProgress: (callback) =>
+    ipcRenderer.on("update-progress", (e, percent) => callback(percent)),
+  onUpdateDownloaded: (callback) =>
+    ipcRenderer.on("update-downloaded", () => callback()),
+  onUpdateStatus: (callback) =>
+    ipcRenderer.on("update-status", (e, status) => callback(status)),
+  onUpdateError: (callback) =>
+    ipcRenderer.on("update-error", (e, error) => callback(error)),
+});
