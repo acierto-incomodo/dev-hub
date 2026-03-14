@@ -13,6 +13,25 @@ const path = require("path");
 // main.js al inicio
 app.setPath("userData", path.join(app.getPath("appData"), "DevHub"));
 
+// Solo permitir una instancia de la aplicación
+const gotTheLock = app.requestSingleInstanceLock();
+
+if (!gotTheLock) {
+  app.quit();
+} else {
+  app.on("second-instance", (event, commandLine, workingDirectory) => {
+    // Si alguien intenta lanzar una segunda instancia, enfocamos y maximizamos nuestra ventana.
+    if (win) {
+      if (win.isMinimized()) win.restore();
+      win.focus();
+      win.maximize();
+    }
+  });
+
+  /* Crear ventana cuando la app esté lista */
+  app.whenReady().then(createWindow);
+}
+
 let win;
 let view;
 let updateDownloaded = false;
@@ -238,6 +257,3 @@ app.on("browser-window-created", (e, window) => {
     }
   });
 });
-
-/* Crear ventana cuando la app esté lista */
-app.whenReady().then(createWindow);
